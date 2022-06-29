@@ -6,10 +6,11 @@ module.exports= {
 //   user: process.env.DB_USER,
 //   password: process.env.DB_PWD,
 //   database: process.env.DB_NAME,
-user: 'sa',
-password: 'Johnsql!',
-db: 'db3',
-  server: 'localhost',
+user: "sa",
+password: "Johnsql!",
+database: "usersdb",
+  server: "localhost",
+  
   port: 1433,
   pool: {
     max: 10,

@@ -10,7 +10,7 @@ const app = express()
 
 app.use(express.json())
 app.use(cors());
-const PORT = 5001
+const PORT = 5000
 
 
 app.get('/',(req,res)=>{
