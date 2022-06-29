@@ -29,9 +29,8 @@ module.exports = {
         const {email} = req.params
         let pool = await poolPromise()
         pool.query(`select * FROM users WHERE email='${email}'`).then(results=>{
-            console.log(results.recordset)
-            let user=results.recordset
-            if(user.length>0){
+            let user=results.recordset[0]
+            if(user){
                 return res.status(200).json({
                     status:200,
                     success: true,
@@ -54,21 +53,42 @@ module.exports = {
                 
     },
 
-    logIn: (req, res)=>{
-        const {email, Password} = req.body
-        const user = data.find(user=>user.email===email)
-        if(user && user.Password=== Password){
-            return res.json({
-                status:200,
-                success: true,
-                message: "Logged in successfully",
-                results:user})}
-            
-            res.status(403).json({
-                status:404,
-                success: false,
-                message: "Wrong credentials",
-                results:{}})
+    logIn: async (req, res)=>{
+        const {email, password} = req.body
+        let pool = await poolPromise()
+        pool.query(`select * FROM users WHERE email='${email}'`).then(results=>{
+            let user=results.recordset[0]
+            if(user){
+                let pass=user.password
+                if(password===pass){
+                        return res.json({
+                            status:200,
+                            success: true,
+                            message: "Logged in successfully",
+                            results:user})
+
+                }
+                        res.status(401).json({
+                        status:401,
+                        success: false,
+                        message: "Wrong password",
+                        results:{}})
+
+
+                
+                
+                
+                }
+
+                res.status(404).json({
+                    status:404,
+                    success: false,
+                    message: "Invalid email",
+                    results:{}})
+
+
+        })
+
 
         
     },
