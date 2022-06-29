@@ -68,12 +68,16 @@ module.exports = {
                             results:user})
 
                 }
-                        res.status(401).json({
-                        status:401,
-                        success: false,
-                        message: "Wrong password",
-                        results:{}})
+                else{
+                    return  res.status(401).json({
+                            status:401,
+                            success: false,
+                            message: "Wrong password",
+                            results:{}})
 
+
+
+                }
 
                 
                 
@@ -101,8 +105,11 @@ module.exports = {
                         VALUES('${id}', '${first_name}', '${last_name}', '${email}', '${gender}', '${Password}')`)
                         .then(results=>{
                             if(results.rowsAffected){
-                                res.send("user added")
-                                console.log("user added")
+                                return res.json({
+                                    status:200,
+                                    success: true,
+                                    message: "USER ADDED SUCCESFULLY"
+                                   })
                             }})
               
         }   
