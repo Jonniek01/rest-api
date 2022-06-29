@@ -8,7 +8,7 @@ module.exports= {
 //   database: process.env.DB_NAME,
 user: 'sa',
 password: 'Johnsql!',
-database: 'db3',
+db: 'db3',
   server: 'localhost',
   port: 1433,
   pool: {

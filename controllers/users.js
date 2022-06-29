@@ -1,74 +1,77 @@
-const fs =require('fs')
-let users=null
 
-fs.readFile('MOCK_DATA.json', (err, data) => {
-    if (err) throw err;
-    users = JSON.parse(data);
-});
+
+const data  = require('../MOCK_DATA.json')
+const mssql = require('mssql')
+const sqlConfig = require('../config/config');
+const { user } = require('../config/config');
+const poolPromise = require('../config/poolPromise')
+
 
 module.exports = {
-
-getUsers: (req, res) =>{
-   if (users){
-    return res.status(200).send({
-        status:200,
-        success:true,
-        message:"users succesfully fetched",
-        data:users
-    })
-   }
-    res.status(400).send({
-        status:400,
-        success:false,
-        message:"failed to get users",
-        data:[]
-    })
-
-},
-
-getUser: (req, res) =>{
-    const {email} = req.params
-   const foundUser = users.filter((user) => user.email==email)
-   if (foundUser.length>0){
-    return res.status(200).send({
-        status:200,
-        success:true,
-        message:"user succesfully fetched",
-        data:foundUser
-    })
-   }
-    res.status(404).send({
-        status:404,
-        success:false,
-        message:"USER NOT FOUND",
-        data:[]
-    })
-
-},
-
- logIn:(req, res)=>{
-    const {email,password} = req.body
-    const user=users.find(user=>user.email===email)
     
+    getUsers: async(req, res)=>{
+            let pool = await poolPromise()
+            pool.query(`select * FROM users`).then(results=>{
+                console.log(results.recordset)
+                res.json({
+                    status:200,
+                    success: true,
+                    message: "success",
+                    results:results.recordset})
+            }
 
+            )
+        
 
-         if (user.Password===password){
-            return res.status(200).send({
-              status:200,
-              success:true,
-              message:"SUCCESFULLY LOGGED IN",
-              data:user
-          })
-         }
-         res.status(401).send({
-              status:401,
-              success:false,
-              message:"LOG IN FAILED",
-              data:[]
-          })
-      
+        
+    },
 
+    getUser: (req, res)=>{
+        const {email} = req.params
+        const user = data.find(user=>user.email===email)
+        if(user){
+        return res.status(200).json({
+            status:200,
+            success: true,
+            message: "success",
+            results:user})}
+    
+            res.status(404).json({
+                status:404,
+                success: false,
+                message: "not found",
+                results:{}})
+    },
+
+    logIn: (req, res)=>{
+        const {email, Password} = req.body
+        const user = data.find(user=>user.email===email)
+        if(user && user.Password=== Password){
+            return res.json({
+                status:200,
+                success: true,
+                message: "Logged in successfully",
+                results:user})}
+            
+            res.status(403).json({
+                status:404,
+                success: false,
+                message: "Wrong credentials",
+                results:{}})
+
+        
+    },
+
+    create: async(req, res)=>{
+        let {id, first_name, last_name, email, gender, Password} = req.body
+            let pool = await poolPromise()
+            pool.query(`insert into users 
+                        VALUES('${id}', '${first_name}', '${last_name}', '${email}', '${gender}', '${Password}')`)
+                        .then(results=>{
+                            if(results.rowsAffected){
+                                res.send("user added")
+                                console.log("user added")
+                            }})
+              
+        }   
 }
-}
-
-
