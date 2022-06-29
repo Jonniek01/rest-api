@@ -1,5 +1,4 @@
-import { v4 as uuidv4 } from 'uuid'
-import fs from 'fs'
+const fs =require('fs')
 let users=null
 
 fs.readFile('MOCK_DATA.json', (err, data) => {
@@ -7,10 +6,9 @@ fs.readFile('MOCK_DATA.json', (err, data) => {
     users = JSON.parse(data);
 });
 
+module.exports = {
 
-
-
-export const getUsers= (req, res) =>{
+getUsers: (req, res) =>{
    if (users){
     return res.status(200).send({
         status:200,
@@ -26,12 +24,9 @@ export const getUsers= (req, res) =>{
         data:[]
     })
 
+},
 
-
-
-}
-
-export const getUser= (req, res) =>{
+getUser: (req, res) =>{
     const {email} = req.params
    const foundUser = users.filter((user) => user.email==email)
    if (foundUser.length>0){
@@ -49,5 +44,31 @@ export const getUser= (req, res) =>{
         data:[]
     })
 
+},
+
+ logIn:(req, res)=>{
+    const {email,password} = req.body
+    const user=users.find(user=>user.email===email)
+    
+
+
+         if (user.Password===password){
+            return res.status(200).send({
+              status:200,
+              success:true,
+              message:"SUCCESFULLY LOGGED IN",
+              data:user
+          })
+         }
+         res.status(401).send({
+              status:401,
+              success:false,
+              message:"LOG IN FAILED",
+              data:[]
+          })
+      
+
 }
+}
+
 

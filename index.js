@@ -1,21 +1,25 @@
-import express from 'express'
-import bodyParser from 'body-parser'
-import userRoutes from './routes/users.js'
-import loginRoute from './routes/login.js'
+
+const express = require("express");
+const cors = require('cors');
+require('dotenv').config()
+const  {router} = require('./routes/users.js')
+require('dotenv').config()
 
 const app = express()
-const PORT = 3001;
 
-app.use(bodyParser.json())
+
+app.use(express.json())
+app.use(cors());
+const PORT = 5001
 
 
 app.get('/',(req,res)=>{
     res.send("USERS APP")
 })
 
-app.use('/login',loginRoute)
+app.use('/users', router);
 
-app.use('/users', userRoutes);
+
 
 app.get('*',(req,res)=>{
     res.status(404).send({
