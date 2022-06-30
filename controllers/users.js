@@ -1,5 +1,3 @@
-
-
 const data  = require('../MOCK_DATA.json')
 const poolPromise = require('../config/poolPromise')
 const { user } = require('../config/config')
@@ -9,9 +7,10 @@ module.exports = {
     
     getUsers: async(req, res)=>{
 
+
             let pool = await poolPromise()
             pool.query(`select * FROM users`).then(results=>{
-                res.json({
+                res.status(200).json({
                     status:200,
                     success: true,
                     message: "success",
@@ -61,7 +60,7 @@ module.exports = {
             if(user){
                 let pass=user.password
                 if(password===pass){
-                        return res.json({
+                        return res.status(200).json({
                             status:200,
                             success: true,
                             message: "Logged in successfully",
@@ -98,21 +97,29 @@ module.exports = {
     },
 
     create: async(req, res)=>{
-        let {id, first_name, last_name, email, gender, Password} = req.body
+            
+        let {id, first_name, last_name, email, gender, Password} = req.body;
             let pool = await poolPromise()
        
             pool.query(`insert into users 
                         VALUES('${id}', '${first_name}', '${last_name}', '${email}', '${gender}', '${Password}')`)
                         .then(results=>{
                             if(results.rowsAffected){
-                                return res.json({
+                                return res.status(200).json({
                                     status:200,
                                     success: true,
                                     message: "USER ADDED SUCCESFULLY"
                                    })
                             }})
-              
-        }   
+                            .catch(err=>{
+                                return res.status(400).json({
+                                    status:400,
+                                    success:false,
+                                    message: err
+                                   })
+
+                            })
+                        } 
 }
 
 
