@@ -16,8 +16,17 @@ const PORT = process.env.PORT
 app.get('/',(req,res)=>{
     res.send("USERS APP")
 })
+app.use(function(err, req, res, next){
+    console.log("global err:",err)
 
-app.use('/users', router);
+    res.status(500).send({message:"something went wrong"})
+})
+
+const use = fn => (req, res, next) =>
+    Promise.resolve(fn(req, res, next)).catch(next);
+
+
+app.use('/users', use(router));
 
 
 
