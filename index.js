@@ -22,11 +22,11 @@ app.use(function(err, req, res, next){
     res.status(500).send({message:"something went wrong"})
 })
 
-const use = fn => (req, res, next) =>
+const errfunc = fn => (req, res, next) =>
     Promise.resolve(fn(req, res, next)).catch(next);
 
 
-app.use('/users', use(router));
+app.use('/users', errfunc(router));
 
 
 
@@ -36,7 +36,9 @@ app.get('*',(req,res)=>{
         success:false,
         message:"RESOURCE NOT FOUND",
         data:[]
+
     })
+    
 })
 
 
